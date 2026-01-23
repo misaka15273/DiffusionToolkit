@@ -73,7 +73,7 @@ public class Settings : SettingsContainer, IScanOptions
         //{
         //    RecurseFolders = true;
         //}
-
+        Volume = 1.0f;
         Instance = this;
     }
 
@@ -463,6 +463,12 @@ public class Settings : SettingsContainer, IScanOptions
     }
 
     public bool LoopVideo
+    {
+        get;
+        set => UpdateValue(ref field, value);
+    }
+
+    public float Volume
     {
         get;
         set => UpdateValue(ref field, value);

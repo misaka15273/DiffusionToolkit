@@ -1,8 +1,10 @@
 # What is Diffusion Toolkit?
 
-Are you tired of dragging your images into PNG-Info to see the metadata?  Annoyed at how slow navigating through Explorer is to view your images? Want to organize your images without having to move them around to different folders? Wish you could easily search for images using metadata? 
+Are you tired of dragging your images into PNG-Info to see the metadata? Who even uses A1111 anymore? Annoyed at how slow navigating through Explorer is to view your images? Want to organize your images without having to move them around to different folders? Wish you could easily search for images using metadata? 
 
-Diffusion Toolkit (https://github.com/RupertAvery/DiffusionToolkit) is an image metadata-indexer and viewer for AI-generated images. It aims to help you organize, search and sort your ever-growing collection of best quality 4k masterpieces.
+Diffusion Toolkit (https://github.com/RupertAvery/DiffusionToolkit) is metadata-indexer and media viewer for AI-generated images. 
+
+It aims to help you organize, search and sort your ever-growing collection of best quality 4k masterpieces.
 
 # Installation
 

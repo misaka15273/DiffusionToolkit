@@ -12,7 +12,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,7 +29,7 @@ namespace Diffusion.Toolkit.Controls
     /// <summary>
     /// Interaction logic for PreviewPane.xaml
     /// </summary>
-    public partial class PreviewPane : UserControl
+    public partial class PreviewPane : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty IsLoadingProperty =
             DependencyProperty.Register(
@@ -57,6 +59,17 @@ namespace Diffusion.Toolkit.Controls
                 ownerType: typeof(PreviewPane),
                 typeMetadata: new FrameworkPropertyMetadata(
                     defaultValue: false,
+                    propertyChangedCallback: PropertyChangedCallback)
+            );
+
+        public static readonly DependencyProperty VolumeProperty =
+            DependencyProperty.Register(
+                name: nameof(Volume),
+                propertyType: typeof(double),
+                ownerType: typeof(PreviewPane),
+                typeMetadata: new FrameworkPropertyMetadata(
+                    defaultValue: 1.0d,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     propertyChangedCallback: PropertyChangedCallback)
             );
 
@@ -90,8 +103,11 @@ namespace Diffusion.Toolkit.Controls
 
                 //if (model.Type == ImageType.Video)
                 //{
-                //    preview.Player.Source = new Uri(model.Path, UriKind.Absolute);
-                //    preview.Player.Play();
+                //    if (preview is not { IsPopout: false, MainModel.IsPreviewOpen: true })
+                //    {
+                //        preview.isPlaying = true;
+                //        preview.Player?.Play();
+                //    }
                 //}
             }
         }
@@ -137,6 +153,18 @@ namespace Diffusion.Toolkit.Controls
         {
             get => (ImageViewModel)GetValue(ImageProperty);
             set => SetValue(ImageProperty, value);
+        }
+
+        public double Volume
+        {
+            get => (double)GetValue(VolumeProperty);
+            set => SetValue(VolumeProperty, value);
+        }
+
+        public bool ShowVolume
+        {
+            get;
+            set => SetField(ref field, value);
         }
 
         public ICommand CopyPathCommand { get; set; }
@@ -537,13 +565,20 @@ namespace Diffusion.Toolkit.Controls
             _scrollDragger = null;
 
             Player = (MediaElement)sender;
+
+            isPlaying = true;
+            Player?.Play();
         }
 
         private void Player_OnMediaEnded(object sender, RoutedEventArgs e)
         {
+            isEnded = true;
+            isPlaying = false;
             if (ServiceLocator.Settings.LoopVideo)
             {
                 Player?.Position = TimeSpan.FromMilliseconds(1);
+                isEnded = false;
+                isPlaying = true;
             }
         }
 
@@ -557,6 +592,85 @@ namespace Diffusion.Toolkit.Controls
             _scrollDragger = new ScrollDragger(Preview, ScrollViewer, handCursor, grabCursor);
 
             SetFocus();
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        private void Volume_Click(object sender, RoutedEventArgs e)
+        {
+            ShowVolume = !ShowVolume;
+            e.Handled = true;
+        }
+
+        private bool isPlaying = true;
+        private bool isEnded = false;
+
+        private void Player_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (isPlaying)
+            {
+                Player?.Pause();
+            }
+            else
+            {
+                if (isEnded)
+                {
+                    Player?.Position = TimeSpan.FromMilliseconds(1);
+                    isEnded = false;
+                }
+                Player?.Play();
+            }
+            isPlaying = !isPlaying;
+            e.Handled = true;
+        }
+
+        private void Loop_Click(object sender, RoutedEventArgs e)
+        {
+            MainModel.Settings.LoopVideo = !MainModel.Settings.LoopVideo;
+        }
+
+        public void Pause()
+        {
+            isPlaying = false;
+            Player?.Pause();
+        }
+
+        private void MediaElement_OnMediaOpened(object sender, RoutedEventArgs e)
+        {
+            if (Image.Type == ImageType.Video)
+            {
+                if (IsPopout || !MainModel.IsPreviewOpen)
+                {
+                    isPlaying = true;
+                    Player?.Play();
+                }
+                else if (!IsPopout && MainModel.IsPreviewOpen)
+                {
+                    isPlaying = true;
+                    Player?.Play();
+                    Task.Delay(10).ContinueWith((t) =>
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            isPlaying = false;
+                            Player?.Stop();
+                        });
+                    });
+                }
+            }
         }
     }
 }

@@ -1007,6 +1007,7 @@
                                   PreviewKeyUp="PreviewPane_OnPreviewKeyUp"
                                   PreviewKeyDown="PreviewPane_OnPreviewKeyDown"
                                   MouseDoubleClick="PreviewPane_OnMouseDoubleClick"
+                                  Volume="{Binding MainModel.Settings.Volume}"
                                   Drop="PreviewPane_OnDrop"></controls:PreviewPane>
 
             <Grid x:Name="PreviewPaneGrid" Background="{x:Null}">

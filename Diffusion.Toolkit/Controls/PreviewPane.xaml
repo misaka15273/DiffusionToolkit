@@ -64,10 +64,13 @@
                 <MediaElement 
                     DataContext="{Binding Image, RelativeSource={RelativeSource  FindAncestor, AncestorType={x:Type UserControl}}}"
                     Source="{Binding Path}"
-                    LoadedBehavior="Play"
+                    LoadedBehavior="Manual"
                     Loaded="Player_OnLoaded"
+                    MediaOpened="MediaElement_OnMediaOpened"
                     MediaEnded="Player_OnMediaEnded"
+                    MouseDown="Player_OnMouseDown"
                     SpeedRatio="1"
+                    Volume="{Binding MainModel.Settings.Volume, RelativeSource={RelativeSource  FindAncestor, AncestorType={x:Type UserControl}}}"
                 ></MediaElement>
             </DataTemplate>
         </ResourceDictionary>
@@ -253,7 +256,99 @@
                             </Style.Triggers>
                         </Style>
                     </fa:ImageAwesome.Resources>
+                </fa:ImageAwesome>
+            </Button>
+          
+        </Grid>
+        <Grid Background="{x:Null}">
 
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition>
+                    <RowDefinition.Style>
+                        <Style TargetType="{x:Type RowDefinition}">
+                            <Setter Property="Height" Value="0"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource iflessThan}, ConverterParameter=570}" Value="True">
+                                    <Setter Property="Height" Value="50"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+            </RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="32"/>
+                <ColumnDefinition Width="32"/>
+            </Grid.ColumnDefinitions>
+            <Slider Grid.Row="1" Grid.Column="2" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Transparent"
+                    Minimum="0"
+                    Maximum="1.0"
+                    Value="{Binding Volume}"
+                    Visibility="{Binding ShowVolume, Converter={StaticResource boolToVis}}"
+                    >
+            </Slider>
+            <Button Grid.Row="2" Grid.Column="1" ToolTip="Loop Video" Click="Loop_Click" DataContext="{Binding Image, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource StaticButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static common:ImageType.Image}">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static common:ImageType.Video}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <fa:ImageAwesome Margin="0,4,0,0" Height="18" Icon="Repeat" Foreground="{DynamicResource ForegroundBrush}">
+                    <fa:ImageAwesome.Resources>
+                        <Style TargetType="fa:ImageAwesome">
+                            <Setter Property="Opacity" Value="0.5"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="1.0"></Setter>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding MainModel.Settings.LoopVideo, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Value="True" >
+                                    <Setter Property="Opacity" Value="1.0"></Setter>
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Resources>
+                </fa:ImageAwesome>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="2" ToolTip="Volume" Click="Volume_Click" DataContext="{Binding Image, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource StaticButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static common:ImageType.Image}">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static common:ImageType.Video}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <fa:ImageAwesome Margin="0,4,0,0" Height="18" Icon="VolumeOff" Foreground="{DynamicResource ForegroundBrush}">
+                    <fa:ImageAwesome.Resources>
+                        <Style TargetType="fa:ImageAwesome">
+                            <Setter Property="Opacity" Value="0.5"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="1.0"></Setter>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding ShowVolume, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Value="True" >
+                                    <Setter Property="Opacity" Value="1.0"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Resources>
                 </fa:ImageAwesome>
             </Button>
         </Grid>

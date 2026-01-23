@@ -64,7 +64,9 @@
             x:Name="PreviewPane" 
             AllowDrop="True"
             Loaded="PreviewPane_OnLoaded"
-            Drop="PreviewPane_OnDrop"></controls:PreviewPane>
+            Drop="PreviewPane_OnDrop"
+            Volume="{Binding MainModel.Settings.Volume}"
+            ></controls:PreviewPane>
 
 
         <Grid Background="{x:Null}">
@@ -130,10 +132,11 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="70"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
-                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="28"/>
                     </Grid.RowDefinitions>
 
                     <Button Style="{DynamicResource BorderlessButton}" Grid.Row="1" Grid.Column="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Command="{Binding CurrentImage.ToggleParameters}">

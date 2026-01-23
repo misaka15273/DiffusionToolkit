@@ -5,22 +5,17 @@ using Diffusion.Toolkit.Common;
 using Diffusion.Toolkit.Configuration;
 using Diffusion.Toolkit.Models;
 using Diffusion.Toolkit.Thumbnails;
-using System.Collections;
-using System.Windows.Controls.Primitives;
-using System.Windows.Forms;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 using Diffusion.ComfyUI;
 
 namespace Diffusion.Toolkit.Services;
+
 
 public class ServiceLocator
 {
     private static NavigatorService? _navigatorService;
     private static MessageService? _messageServuce;
     private static DataStore? _dataStore;
-
-    private static NavigationService? _navigationService;
 
     //private static ScanService? _scanManager;
     private static Settings? _settings;
@@ -33,6 +28,8 @@ public class ServiceLocator
     public static ToastService ToastService { get; set; }
     public static Dispatcher Dispatcher { get; set; }
     public static NodePropertyCache NodePropertyCache { get; set; }
+
+
 
     public static void SetDataStore(DataStore dataStore)
     {

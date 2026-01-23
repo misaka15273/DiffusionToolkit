@@ -362,12 +362,14 @@ namespace Diffusion.Toolkit
 
                 _previewWindow.Closed += (sender, args) =>
                 {
+                    _model.IsPreviewOpen = false;
                     _search.OnCurrentImageChange = null;
                     _search.ThumbnailListView.FocusCurrentItem();
                     _previewWindow = null;
                     _search.NavigationCompleted -= SearchOnNavigationCompleted;
                 };
                 _previewWindow.SetCurrentImage(_search.CurrentImage);
+
 
                 _search.NavigationCompleted += SearchOnNavigationCompleted;
 
@@ -422,6 +424,8 @@ namespace Diffusion.Toolkit
                     _previewWindow.Show();
                 }
 
+                _model.IsPreviewOpen = true;
+                _search.PreviewPane.Pause();
             }
             else
             {
